@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>LIS in Knight UI</title>
+<style>
+    :root {
+        --cell-size: 60px;
+        --board-border: 8px solid #2c3e50;
+    }
+
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, sans-serif;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding-bottom: 40px;
+    }
+
+        .top-bar {
+            width: 100%;
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .top-bar span {
+            color: #2c3e50;
+            background-color: #ecf0f1;
+            font-weight: bold;
+            padding: 5px 10px;
+            border: 1px solid #ecf0f1; 
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .top-bar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border: 1px solid #ecf0f1;
+            border-radius: 4px;
+            margin-right: 10px; 
+        }
+        .top-bar a:hover { 
+            background-color: #34495e; 
+        }
+        .top-bar a:last-child,
+        .top-bar span:last-child {
+            margin-right: 0;
+        }
+
+    .main-container {
+        display: flex;
+        gap: 30px;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        box-sizing: border-box;
+        padding: 0 20px;
+    }
+
+    .control-panel {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        background: white;
+        padding: 18px;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        max-width: 300px;
+        min-width: 260px;
+    }
+
+    .control-panel h4 { margin: 6px 0 0 0; }
+
+    button {
+        padding: 10px 14px;
+        cursor: pointer;
+        background-color: #2c3e50;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        font-size: 15px;
+        transition: background 0.15s;
+    }
+    button:hover { background-color: #34495e; }
+    button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+
+    input[type="text"] {
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid #ccc;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .board-wrapper {
+        position: relative;
+        width: 900px;   
+        height: 560px;   
+        border-radius: 10px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        background: #fff;
+        overflow: hidden;
+    }
+    .canvas-card {
+        background: white;
+        border-radius: 8px;
+        padding: 12px;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+        width: 100%;
+        height: 100%;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+    }
+
+    #canvasWrapper {
+        flex: 1 1 auto;
+        overflow: auto;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        background: #fff;
+    }
+
+
+    #tourCanvas {
+        display: block;
+        background: #fff;
+    }
+
+    .history-panel {
+        background: white;
+        padding: 12px;
+        border-radius: 8px;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        width: 220px;
+        max-height: 640px;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+    }
+
+    .history-list {
+        overflow-y: auto;
+        flex-grow: 1;
+        border: 1px solid #eee;
+        margin-top: 8px;
+        padding: 6px;
+        box-sizing: border-box;
+        background: #fafafa;
+        border-radius: 6px;
+    }
+
+    .history-item {
+        padding: 6px 8px;
+        border-bottom: 1px solid #eee;
+        cursor: pointer;
+        font-family: monospace;
+        font-size: 14px;
+        border-radius: 4px;
+    }
+    .history-item:hover { background-color: #f1f5f9; }
+    .history-item.active { background-color: #3498db; color: white; }
+
+    .status { margin-top: 2px; font-weight: bold; color: #333; font-size: 0.95em; text-align: center; }
+
+    label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+
+    h4 { margin: 6px 0; }
+
+    @media (max-width:1100px) {
+        .board-wrapper { width: 720px; height: 480px; }
+    }
+</style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <a href="KnightsTour.html">Knight's Tour</a>
+        <span>Largest Monotonically Increasing Subsequence</span>
+    </div>
+
+
+    <div class="main-container">
+
+        <div class="control-panel">
+            <div class="status" id="statusMsg">Masukkan deret angka lalu klik Generate</div>
+
+            <h4>Input (pisah spasi)</h4>
+            <input id="inputArray" type="text" value="4 1 13 7 0 2 8 11 3">
+
+            <button id="btnGenerate">Generate</button>
+
+            <div style="margin-top:8px;">
+                <label><input type="checkbox" id="toggleEdges" checked> Show edges</label><br>
+            </div>
+        </div>
+
+        <div class="board-wrapper">
+            <div class="canvas-card" style="padding:16px;">
+                <h4 style="margin:0 0 8px 0;">Tree Visualization</h4>
+                <div id="canvasWrapper">
+                    <canvas id="tourCanvas" width="3500" height="2200"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <div class="history-panel">
+            <strong>All LIS (solutions)</strong>
+            <div class="history-list" id="historyList">
+                <div style="padding:10px; color:#999; text-align:center;">No data</div>
+            </div>
+            <div style="margin-top:10px; font-size:14px;">
+                <b>Selected:</b> <span id="selectedInfo">-</span>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+
+const canvas = document.getElementById('tourCanvas');
+const ctx = canvas.getContext('2d');
+const canvasWrapper = document.getElementById('canvasWrapper');
+
+const btnGenerate = document.getElementById('btnGenerate');
+const inputArray = document.getElementById('inputArray');
+const statusMsg = document.getElementById('statusMsg');
+const historyList = document.getElementById('historyList');
+const selectedInfo = document.getElementById('selectedInfo');
+const toggleEdges = document.getElementById('toggleEdges');
+
+let treeRoot = null;
+let allLIS = [];
+let currentSolution = 0;
+
+function parseInput(str) {
+    if (!str) return [];
+    return str.trim().split(/\s+/).map(s => Number(s)).filter(n => !Number.isNaN(n));
+}
+
+function getAllLISIndices(arr) {
+    const results = [];
+    let maxLen = 0;
+
+    function backtrack(index, subseqVals, subseqIdx) {
+        if (subseqIdx.length > 0) {
+            if (subseqIdx.length > maxLen) {
+                maxLen = subseqIdx.length;
+                results.length = 0;
+                results.push(subseqIdx.slice());
+            } else if (subseqIdx.length === maxLen) {
+                results.push(subseqIdx.slice());
+            }
+        }
+        for (let i = index; i < arr.length; i++) {
+            if (subseqVals.length === 0 || arr[i] > subseqVals[subseqVals.length - 1]) {
+                subseqVals.push(arr[i]);
+                subseqIdx.push(i);
+                backtrack(i + 1, subseqVals, subseqIdx);
+                subseqVals.pop();
+                subseqIdx.pop();
+            }
+        }
+    }
+
+    backtrack(0, [], []);
+    return results; 
+}
+
+function buildTreeWithIndices(arr) {
+    const root = { value: null, idx: null, children: [] };
+
+    function dfs(start, subseqIdx, node) {
+        for (let i = start; i < arr.length; i++) {
+            if (subseqIdx.length === 0 || arr[i] > arr[subseqIdx[subseqIdx.length - 1]]) {
+                const child = { value: arr[i], idx: i, children: [] };
+                node.children.push(child);
+                subseqIdx.push(i);
+                dfs(i + 1, subseqIdx, child);
+                subseqIdx.pop();
+            }
+        }
+    }
+
+    dfs(0, [], root);
+    return root;
+}
+
+function assignLevels(node, depth, levels) {
+    if (!levels[depth]) levels[depth] = [];
+    levels[depth].push(node);
+    node.depth = depth;
+    node.children.forEach(c => assignLevels(c, depth + 1, levels));
+}
+
+function setCoordinates(levels) {
+    const horizontalGap = 110;
+    const verticalGap = 100;
+    const w = canvas.width;
+    levels.forEach((layer, depth) => {
+        const totalWidth = (layer.length - 1) * horizontalGap;
+        const y = 60 + depth * verticalGap;
+        layer.forEach((node, i) => {
+            node.x = Math.round(w / 2 - totalWidth / 2 + i * horizontalGap);
+            node.y = y;
+        });
+    });
+}
+
+function drawTree(root) {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.lineWidth = 2;
+
+    const levels = [];
+    assignLevels(root, 0, levels);
+    setCoordinates(levels);
+
+    function drawEdges(n) {
+        n.children.forEach(c => {
+            if (toggleEdges.checked) {
+                ctx.beginPath();
+                ctx.moveTo(n.x, n.y + 26);
+                ctx.lineTo(c.x, c.y - 26);
+                ctx.strokeStyle = '#888';
+                ctx.lineWidth = 2;
+                ctx.stroke();
+            }
+            drawEdges(c);
+        });
+    }
+    drawEdges(root);
+
+    function drawNodes(n) {
+        const R = 26;
+        const isRoot = n.value === null;
+        let fill = '#ffffff';
+
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, R, 0, Math.PI * 2);
+        ctx.fillStyle = fill;
+        ctx.fill();
+        ctx.lineWidth = 2.5;
+        ctx.strokeStyle = '#233142';
+        ctx.stroke();
+
+        if (!isRoot) {
+            ctx.fillStyle = '#233142';
+            ctx.font = 'bold 20px Segoe UI';
+            ctx.textBaseline = 'middle';
+            const text = String(n.value);
+            const w = ctx.measureText(text).width;
+            ctx.fillText(text, n.x - w / 2, n.y);
+        } else {
+            ctx.fillStyle = '#233142';
+            ctx.font = '14px Segoe UI';
+            ctx.fillText('ROOT', n.x - ctx.measureText('ROOT').width / 2, n.y);
+        }
+
+        n.children.forEach(drawNodes);
+    }
+    drawNodes(root);
+}
+
+function centerCanvasInWrapper() {
+    const wrapper = canvasWrapper;
+    wrapper.scrollLeft = Math.max(0, (canvas.width - wrapper.clientWidth) / 2);
+    wrapper.scrollTop = 0;
+}
+
+function showSolution(index) {
+    if (!allLIS || allLIS.length === 0) return;
+    currentSolution = Math.max(0, Math.min(allLIS.length - 1, index));
+    const idxSet = new Set(allLIS[currentSolution]);
+    drawTree(treeRoot);
+
+    document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
+    const item = document.getElementById('hist-' + currentSolution);
+    if (item) item.classList.add('active');
+
+    selectedInfo.textContent = `${currentSolution + 1} / ${allLIS.length}`;
+    statusMsg.textContent = `Showing solution ${currentSolution + 1} (length ${allLIS[0] ? allLIS[0].length : 0})`;
+}
+
+btnGenerate.addEventListener('click', () => {
+    const arr = parseInput(inputArray.value);
+    if (arr.length === 0) {
+        alert('Input kosong atau tidak valid. Masukkan angka dipisah spasi.');
+        return;
+    }
+
+    treeRoot = buildTreeWithIndices(arr);
+    allLIS = getAllLISIndices(arr);
+
+    historyList.innerHTML = '';
+    if (!allLIS || allLIS.length === 0) {
+        historyList.innerHTML = '<div style="padding:10px;color:#999;text-align:center;">No LIS</div>';
+        selectedInfo.textContent = '-';
+        statusMsg.textContent = 'Tidak ada LIS';
+    } else {
+        allLIS.forEach((sol, i) => {
+            const div = document.createElement('div');
+            div.className = 'history-item';
+            div.id = 'hist-' + i;
+            const values = sol.map(idx => arr[idx]);
+            div.textContent = `${i+1}. [ ${values.join(', ')} ]`;
+            div.addEventListener('click', () => showSolution(i));
+            historyList.appendChild(div);
+        });
+
+        currentSolution = 0;
+        showSolution(0);
+        centerCanvasInWrapper();
+    }
+});
+
+toggleEdges.addEventListener('change', () => { if (treeRoot) showSolution(currentSolution); });
+
+(function init() {
+    canvas.width = 3500;
+    canvas.height = 2200;
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.font = '14px Segoe UI';
+    ctx.fillStyle = '#666';
+    ctx.fillText('Masukkan deret angka di panel kiri lalu klik Generate.', 30, 30);
+    statusMsg.textContent = 'Ready for LIS input';
+})();
+</script>
+
+</body>
+</html>

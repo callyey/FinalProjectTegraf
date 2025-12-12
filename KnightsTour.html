@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knight's Tour</title>
+    <style>
+        :root {
+            --cell-size: 60px;
+            --board-border: 8px solid #2c3e50;
+            --white-sq: #f0d9b5;
+            --black-sq: #b58863;
+            --visited-sq: #55efc4;
+            --highlight-sq: #ffeaa7;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding-bottom: 40px;
+        }
+
+        .top-bar {
+            width: 100%;
+            background-color: #2c3e50;
+            color: white;
+            padding: 10px 20px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .top-bar span {
+            color: #2c3e50;
+            background-color: #ecf0f1;
+            font-weight: bold;
+            padding: 5px 10px;
+            border: 1px solid #ecf0f1; 
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .top-bar a {
+            color: #ecf0f1;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 5px 10px;
+            border: 1px solid #ecf0f1;
+            border-radius: 4px;
+            margin-right: 10px; 
+        }
+        .top-bar a:hover { 
+            background-color: #34495e; 
+        }
+        .top-bar a:last-child,
+        .top-bar span:last-child {
+            margin-right: 0;
+        }
+
+        .main-container {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .control-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            max-width: 300px;
+        }
+
+        .toggles {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .playback-controls {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        button {
+            padding: 8px 12px;
+            cursor: pointer;
+            background-color: #2c3e50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+
+        button:hover { background-color: #34495e; }
+        button:disabled { background-color: #bdc3c7; cursor: not-allowed; }
+        
+        .btn-playback {
+            font-weight: bold;
+            padding: 8px 15px;
+            background-color: #e67e22;
+        }
+        .btn-playback:hover { background-color: #d35400; }
+
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            width: 100%;
+        }
+
+        .board-wrapper {
+            position: relative;
+            width: calc(var(--cell-size) * 8);
+            height: calc(var(--cell-size) * 8);
+            border: var(--board-border);
+            user-select: none;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(8, var(--cell-size));
+            grid-template-rows: repeat(8, var(--cell-size));
+            width: 100%;
+            height: 100%;
+        }
+
+        .cell {
+            width: var(--cell-size);
+            height: var(--cell-size);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            font-size: 12px;
+            color: rgba(0,0,0,0.2);
+        }
+
+        .cell.white { background-color: var(--white-sq); }
+        .cell.black { background-color: var(--black-sq); }
+
+        .cell.visited { background-color: var(--visited-sq) !important; }
+
+        .cell.drag-over { opacity: 0.7; box-shadow: inset 0 0 10px #000; }
+
+        .knight {
+            color: black;
+            font-size: 40px;
+            cursor: grab;
+            z-index: 10;
+            transition: transform 0.1s;
+        }
+        .knight:active { cursor: grabbing; transform: scale(1.2); }
+
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 5;
+            transition: opacity 0.3s;
+        }
+        
+        .hide-lines { opacity: 0; }
+
+        .history-panel {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            width: 180px;
+            max-height: 500px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .history-list {
+            overflow-y: auto;
+            flex-grow: 1;
+            border: 1px solid #eee;
+            margin-top: 10px;
+        }
+
+        .history-item {
+            padding: 4px 8px;
+            bordher-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .history-item:hover { background-color: #f9f9f9; }
+        .history-item.active { background-color: #3498db; color: white; }
+
+        .status { margin-top: 5px; font-weight: bold; color: #333; font-size: 0.9em; text-align: center; }
+
+        label { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <span>Knight's Tour</span>
+        <a href="LMIS.html">Largest Monotonically Increasing Subsequence</a>
+    </div>
+
+
+    <div class="main-container">
+        
+        <div class="control-panel">
+            <div class="status" id="statusMsg">Drag Knight to start</div>
+            
+            <select id="tourType">
+                <option value="open">Open Tour</option>
+                <option value="closed">Closed Tour</option>
+            </select>
+
+            <button id="btnSolve">Start Calculation</button>
+            <button id="btnReset" style="background-color: #c0392b;">Reset Board</button>
+
+            <div class="toggles">
+                <strong>Settings</strong>
+                <label>
+                    <input type="checkbox" id="toggleLines" checked> Show Lines
+                </label>
+                <label>
+                    <input type="checkbox" id="toggleVisited" checked> Green Visited Tiles
+                </label>
+            </div>
+
+            <div class="playback-controls">
+                <button class="btn-playback" id="btnFirst" title="Start">|&lt;</button>
+                <button class="btn-playback" id="btnPrev" title="Step Back">&lt;</button>
+                <button class="btn-playback" id="btnPlayPause" title="Play/Pause">||</button>
+                <button class="btn-playback" id="btnNext" title="Step Forward">&gt;</button>
+                <button class="btn-playback" id="btnLast" title="Skip to End">&gt;|</button>
+            </div>
+        </div>
+
+        <div class="board-wrapper" id="boardWrapper">
+            <canvas id="tourCanvas"></canvas>
+            <div class="board" id="board">
+            </div>
+        </div>
+
+        <div class="history-panel">
+            <strong>Path History</strong>
+            <div class="history-list" id="historyList">
+                <div style="padding:10px; color:#999; text-align:center;">No path generated</div>
+            </div>
+        </div>
+
+    </div>
+
+<script>
+    const BOARD_SIZE = 8;
+    const CELL_PIXELS = 60;
+
+    const boardEl = document.getElementById('board');
+    const canvas = document.getElementById('tourCanvas');
+    const ctx = canvas.getContext('2d');
+    const statusMsg = document.getElementById('statusMsg');
+    const historyList = document.getElementById('historyList');
+
+    const btnSolve = document.getElementById('btnSolve');
+    const btnReset = document.getElementById('btnReset');
+    const tourTypeSel = document.getElementById('tourType');
+    
+    const toggleLines = document.getElementById('toggleLines');
+    const toggleVisited = document.getElementById('toggleVisited');
+
+    const btnFirst = document.getElementById('btnFirst');
+    const btnPrev = document.getElementById('btnPrev');
+    const btnPlayPause = document.getElementById('btnPlayPause');
+    const btnNext = document.getElementById('btnNext');
+    const btnLast = document.getElementById('btnLast');
+
+    let knightPos = { x: 0, y: 0 }; 
+    let solvedPath = [];
+    let currentStep = 0;
+    let isPlaying = false;
+    let playInterval = null;
+
+    const movesX = [1, 1, 2, 2, -1, -1, -2, -2];
+    const movesY = [2, -2, 1, -1, 2, -2, 1, -1];
+
+    function init() {
+        canvas.width = BOARD_SIZE * CELL_PIXELS;
+        canvas.height = BOARD_SIZE * CELL_PIXELS;
+        createBoard();
+        placeKnight(0, 0); 
+        updateUIState('idle');
+    }
+
+    function createBoard() {
+        boardEl.innerHTML = '';
+        for (let y = 0; y < BOARD_SIZE; y++) {
+            for (let x = 0; x < BOARD_SIZE; x++) {
+                const cell = document.createElement('div');
+                cell.classList.add('cell');
+                cell.classList.add((x + y) % 2 === 0 ? 'white' : 'black');
+                cell.dataset.x = x;
+                cell.dataset.y = y;
+                
+                const file = String.fromCharCode(97 + x);
+                const rank = 8 - y;
+                cell.title = `${file}${rank}`;
+
+                cell.addEventListener('dragover', handleDragOver);
+                cell.addEventListener('drop', handleDrop);
+                cell.addEventListener('dragenter', (e) => e.target.classList.add('drag-over'));
+                cell.addEventListener('dragleave', (e) => e.target.classList.remove('drag-over'));
+
+                boardEl.appendChild(cell);
+            }
+        }
+    }
+
+    function placeKnight(x, y) {
+        const existing = document.querySelector('.knight');
+        if (existing) existing.remove();
+
+        knightPos = { x, y };
+
+        const k = document.createElement('div');
+        k.classList.add('knight');
+        k.innerHTML = '♞';
+        k.draggable = true;
+        k.addEventListener('dragstart', handleDragStart);
+
+        const cell = document.querySelector(`.cell[data-x='${x}'][data-y='${y}']`);
+        if (cell) cell.appendChild(k);
+    }
+
+    function handleDragStart(e) {
+        if(solvedPath.length > 0) {
+            e.preventDefault();
+            return;
+        }
+        e.dataTransfer.setData('text/plain', 'knight');
+        e.dataTransfer.effectAllowed = 'move';
+        statusMsg.textContent = "Drop to set start";
+    }
+
+    function handleDragOver(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+    }
+
+    function handleDrop(e) {
+        e.preventDefault();
+        e.target.classList.remove('drag-over');
+        let target = e.target.closest('.cell');
+
+        if (target) {
+            const x = parseInt(target.dataset.x);
+            const y = parseInt(target.dataset.y);
+            placeKnight(x, y);
+            statusMsg.textContent = "Ready to solve";
+        }
+    }
+
+    function renderState() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        document.querySelectorAll('.cell.visited').forEach(c => c.classList.remove('visited'));
+
+        if(toggleVisited.checked) {
+            for(let i=0; i <= currentStep; i++) {
+                if(i < solvedPath.length) {
+                    const p = solvedPath[i];
+                    const cell = document.querySelector(`.cell[data-x='${p.x}'][data-y='${p.y}']`);
+                    if(cell) cell.classList.add('visited');
+                }
+            }
+        }
+
+        if (toggleLines.checked && currentStep > 0) {
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#c0392b';
+            ctx.lineCap = 'round';
+            ctx.lineJoin = 'round';
+            ctx.beginPath();
+            
+            const startP = solvedPath[0];
+            ctx.moveTo(startP.x * CELL_PIXELS + CELL_PIXELS/2, startP.y * CELL_PIXELS + CELL_PIXELS/2);
+
+            for(let i=1; i <= currentStep; i++) {
+                if(i < solvedPath.length) {
+                    const p = solvedPath[i];
+                    ctx.lineTo(p.x * CELL_PIXELS + CELL_PIXELS/2, p.y * CELL_PIXELS + CELL_PIXELS/2);
+                }
+            }
+            ctx.stroke();
+        }
+
+        if(solvedPath.length > 0) {
+            const currentP = solvedPath[currentStep];
+            placeKnight(currentP.x, currentP.y);
+        }
+
+        document.querySelectorAll('.history-item').forEach(el => el.classList.remove('active'));
+        const activeItem = document.getElementById(`hist-${currentStep}`);
+        if(activeItem) {
+            activeItem.classList.add('active');
+            activeItem.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        if(currentStep >= solvedPath.length - 1) {
+            isPlaying = false;
+            clearInterval(playInterval);
+            btnPlayPause.textContent = '►';
+            statusMsg.textContent = "Tour Complete";
+        }
+    }
+
+    function play() {
+        if(currentStep >= solvedPath.length - 1) return;
+        isPlaying = true;
+        btnPlayPause.textContent = '||';
+        
+        playInterval = setInterval(() => {
+            if(currentStep < solvedPath.length - 1) {
+                currentStep++;
+                renderState();
+            } else {
+                pause();
+            }
+        }, 150);
+    }
+
+    function pause() {
+        isPlaying = false;
+        clearInterval(playInterval);
+        btnPlayPause.textContent = '►';
+    }
+
+    function stepForward() {
+        pause();
+        if(currentStep < solvedPath.length - 1) {
+            currentStep++;
+            renderState();
+        }
+    }
+
+    function stepBackward() {
+        pause();
+        if(currentStep > 0) {
+            currentStep--;
+            renderState();
+        }
+    }
+
+    function skipToEnd() {
+        pause();
+        if(solvedPath.length > 0) {
+            currentStep = solvedPath.length - 1;
+            renderState();
+        }
+    }
+
+    function resetToStart() {
+        pause();
+        currentStep = 0;
+        renderState();
+    }
+
+    function solveKnightTour() {
+        resetState();
+        const startX = knightPos.x;
+        const startY = knightPos.y;
+        const isClosed = tourTypeSel.value === 'closed';
+
+        let board = Array(BOARD_SIZE).fill().map(() => Array(BOARD_SIZE).fill(-1));
+        let path = [];
+
+        function isValid(x, y) {
+            return x >= 0 && x < BOARD_SIZE && y >= 0 && y < BOARD_SIZE && board[y][x] === -1;
+        }
+
+        function getDegree(x, y) {
+            let count = 0;
+            for (let i = 0; i < 8; i++) {
+                if (isValid(x + movesX[i], y + movesY[i])) count++;
+            }
+            return count;
+        }
+
+        function solve(currX, currY, moveCount) {
+            board[currY][currX] = moveCount;
+            path.push({ x: currX, y: currY });
+
+            if (moveCount === BOARD_SIZE * BOARD_SIZE) {
+                if (!isClosed) return true;
+                for (let i = 0; i < 8; i++) {
+                    if (currX + movesX[i] === startX && currY + movesY[i] === startY) {
+                        path.push({ x: startX, y: startY });
+                        return true;
+                    }
+                }
+                path.pop();
+                board[currY][currX] = -1;
+                return false;
+            }
+
+            let nextMoves = [];
+            for (let i = 0; i < 8; i++) {
+                let nx = currX + movesX[i];
+                let ny = currY + movesY[i];
+                if (isValid(nx, ny)) {
+                    nextMoves.push({ x: nx, y: ny, degree: getDegree(nx, ny) });
+                }
+            }
+
+            nextMoves.sort((a, b) => a.degree - b.degree);
+
+            for (let move of nextMoves) {
+                if (solve(move.x, move.y, moveCount + 1)) return true;
+            }
+
+            path.pop();
+            board[currY][currX] = -1;
+            return false;
+        }
+
+        statusMsg.textContent = "Calculating...";
+        updateUIState('solving');
+
+        setTimeout(() => {
+            if (solve(startX, startY, 1)) {
+                solvedPath = path;
+                generateHistoryList();
+                statusMsg.textContent = "Solved! Playing...";
+                updateUIState('playing');
+                play();
+            } else {
+                statusMsg.textContent = "No solution found.";
+                alert("No solution found for this position.");
+                updateUIState('idle');
+            }
+        }, 50);
+    }
+
+    function generateHistoryList() {
+        historyList.innerHTML = '';
+        solvedPath.forEach((pos, index) => {
+            const div = document.createElement('div');
+            div.classList.add('history-item');
+            div.id = `hist-${index}`;
+            const file = String.fromCharCode(97 + pos.x).toUpperCase();
+            const rank = 8 - pos.y;
+            div.textContent = `${index + 1}. ${file}${rank}`;
+            
+            div.addEventListener('click', () => {
+                pause();
+                currentStep = index;
+                renderState();
+            });
+
+            historyList.appendChild(div);
+        });
+    }
+
+    function resetState() {
+        pause();
+        currentStep = 0;
+        solvedPath = [];
+        historyList.innerHTML = '<div style="padding:10px; color:#999; text-align:center;">No path generated</div>';
+
+        renderState();
+    }
+
+    function updateUIState(state) {
+        const btns = [btnFirst, btnPrev, btnPlayPause, btnNext, btnLast];
+        if(state === 'idle') {
+            btnSolve.disabled = false;
+            btns.forEach(b => b.disabled = true);
+        } else if (state === 'solving') {
+            btnSolve.disabled = true;
+            btns.forEach(b => b.disabled = true);
+        } else if (state === 'playing') {
+            btnSolve.disabled = true;
+            btns.forEach(b => b.disabled = false);
+        }
+    }
+
+    btnSolve.addEventListener('click', solveKnightTour);
+    
+    btnReset.addEventListener('click', () => {
+        resetState();
+        statusMsg.textContent = "Board Reset";
+        updateUIState('idle');
+    });
+
+    toggleLines.addEventListener('change', renderState);
+    toggleVisited.addEventListener('change', renderState);
+
+    btnPlayPause.addEventListener('click', () => {
+        if(isPlaying) pause(); else play();
+    });
+    btnNext.addEventListener('click', stepForward);
+    btnPrev.addEventListener('click', stepBackward);
+    btnLast.addEventListener('click', skipToEnd);
+    btnFirst.addEventListener('click', resetToStart);
+
+    init();
+
+</script>
+</body>
+</html>
