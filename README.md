@@ -14,6 +14,7 @@
 - Hasilnya adalah sebuah path history dari tour tersebut
 - Terdapat lima tombol yang dapat memutar perjalanan dari bidak kuda
 - Juga terdapat settings untuk toggle garis path dan warna visited tiles
+- Untuk memindahkan bidak kuda setelah dilakukannya kalkulasi perlu untuk mereset board terlebih dahulu
 
 ### Largest Monotonically Increasing Subsequence
 - Input angka dengan dipisah oleh spasi
