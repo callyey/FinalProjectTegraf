@@ -35,12 +35,16 @@ LMIS merupakan program yang dibuat untuk menyelesaikan suatu permasalahan yaitu 
 ### Input 
 <img width="296" height="251" alt="image" src="https://github.com/user-attachments/assets/53caef1f-044a-4d3b-9c8a-dd2138616dc0" />   
 
-Pada program ini, ada beberapa input yang dapat dilakukan oleh user. 
+Pada program ini, ada beberapa input yang dapat dilakukan oleh user:
 - Urutan bilangan yang akan dicari LMIS-nya. Bilangan akan dipisahkan dengan spasi. 
 - Memulai program mencari LMIS bilangan yang telah dimasukkan sebelumnya dengan mempencet tombol 'Generate'
 - Juga terdapat fungsi tambahan yang dapat menghilangkan edge yang menghubungkan antar dua node dalam tree hasil LMIS
 
-
-
 ### Output
+<img width="935" height="592" alt="image" src="https://github.com/user-attachments/assets/bbdda241-398e-46a8-9a9f-f4ced3c2d9d9" />  
+
+<img width="238" height="232" alt="image" src="https://github.com/user-attachments/assets/f39b4306-ae5c-446a-94d3-278651e38865" />
+
+
+<img width="905" height="579" alt="image" src="https://github.com/user-attachments/assets/454560cd-097d-4354-b9f2-ada37bed920d" />
 
