@@ -30,9 +30,21 @@
 ### Output
 
 ## LMIS 
-
+LMIS merupakan program yang dibuat untuk menyelesaikan suatu permasalahan yaitu mencari largest monotanically increasing subsequence dari suatu urutan bilangan. 
 
 ### Input 
+Pada program ini, ada beberapa input yang dapat dilakukan oleh user. 
+
+
+Pertama adalah input urutan bilangan yang akan dicari LMIS-nya. Bilangan akan dipisahkan dengan spasi. 
+
+
+Setelah itu, untuk memulai program mencari LMIS bilangan yang telah dimasukkan sebelumnya, dapat dimulai dengan mempencet tombol 'Generate'
+
+
+Pada program ini, juga terdapat fungsi tambahan yang dapat menghilangkan edge yang menghubungkan antar dua node dalam tree hasil LMIS
+
+
 
 ### Output
 
