@@ -45,7 +45,7 @@ Knight's Tour (atau Perjalanan Kuda) adalah sebuah teka-teki matematika klasik y
 <img width="195" height="448" alt="image" src="https://github.com/user-attachments/assets/ae4c1825-c702-47cc-8b63-d3550b5db429" />
 <img width="410" height="404" alt="image" src="https://github.com/user-attachments/assets/84cb7467-486a-4880-a5e8-818f1805db80" />
 
-Output adalah path yang dilaui kuda, user juga dapat melihat Kuda bergerak sendiri dari satu kotak ke kotak lain, meninggalkan garis jejak
+Output adalah path yang dilalui kuda, user juga dapat melihat Kuda bergerak sendiri dari satu kotak ke kotak lain, meninggalkan garis jejak
 
 
 
