@@ -31,14 +31,13 @@ Knight's Tour (atau Perjalanan Kuda) adalah sebuah teka-teki matematika klasik y
 <img width="413" height="415" alt="image" src="https://github.com/user-attachments/assets/340d6129-6183-4cb3-b07b-f221e7605f81" />
 
 - User mengklik salah satu kotak pada papan catur kosong di layar.
-- Aplikasi akan menempatkan ikon Kuda (Knight) di kotak tersebut (misalnya di G2 seperti pada gambar yang kamu kirim).
+- Aplikasi akan menempatkan ikon Kuda (Knight) di kotak tersebut (misalnya di G2 seperti pada gambar)
 - Ini menetapkan koordinat awal (x, y) atau (baris, kolom) dari mana algoritma harus mulai mencari jalan.
   
 <img width="233" height="238" alt="image" src="https://github.com/user-attachments/assets/f19c8a13-d38a-4adf-9f25-969897dd159f" />
 
-- User menekan tombol perintah, biasanya bertuliskan "Start", "Solve", atau "Run" (mungkin juga ada opsi untuk mengatur kecepatan animasi: Slow/Fast).
-- Browser menjalankan algoritma (biasanya Backtracking yang dikombinasikan dengan Warnsdorff's Rule agar lebih cepat).
-- Tombol mungkin berubah menjadi "Stop" atau dinonaktifkan sementara proses berjalan.
+- User menekan tombol "Start Calculation".
+- Browser menjalankan algoritma.
 
 
 ### Output
@@ -46,7 +45,7 @@ Knight's Tour (atau Perjalanan Kuda) adalah sebuah teka-teki matematika klasik y
 <img width="195" height="448" alt="image" src="https://github.com/user-attachments/assets/ae4c1825-c702-47cc-8b63-d3550b5db429" />
 <img width="410" height="404" alt="image" src="https://github.com/user-attachments/assets/84cb7467-486a-4880-a5e8-818f1805db80" />
 
-user melihat Kuda bergerak sendiri dari satu kotak ke kotak lain, meninggalkan garis jejak
+Output adalah path yang dilaui kuda, user juga dapat melihat Kuda bergerak sendiri dari satu kotak ke kotak lain, meninggalkan garis jejak
 
 
 
