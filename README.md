@@ -42,11 +42,11 @@ Pada program LMIS ini, ada beberapa input yang dapat dilakukan oleh user:
 
 ### Output  
 Pada program LMIS ini, ada beberapa output yang akan didapatkan dari input user sebelumnya:  
-- Visualisasi tree pemetaan semua monotanically increasing subsequence dari suatu urutan bilangan yang telah diinputkan
-<img width="935" height="592" alt="image" src="https://github.com/user-attachments/assets/bbdda241-398e-46a8-9a9f-f4ced3c2d9d9" />   
+- Visualisasi tree pemetaan semua monotanically increasing subsequence dari suatu urutan bilangan yang telah diinputkan 
+<img width="935" height="592" alt="image" src="https://github.com/user-attachments/assets/bbdda241-398e-46a8-9a9f-f4ced3c2d9d9" /> \  
 - Hasil yang akan menunjukkan LMIS dari bilangan yang telah dinput sebelumnya, dengan berkemungkinan menunjukkan beberapa jawaban sesuai dengan urutan bilangannya  
-<img width="238" height="232" alt="image" src="https://github.com/user-attachments/assets/f39b4306-ae5c-446a-94d3-278651e38865" />      
-<img width="297" height="62" alt="image" src="https://github.com/user-attachments/assets/328c14b3-129e-4326-8a1e-12fb38b8ad41" />  
+<img width="238" height="232" alt="image" src="https://github.com/user-attachments/assets/f39b4306-ae5c-446a-94d3-278651e38865" />  \    
+<img width="297" height="62" alt="image" src="https://github.com/user-attachments/assets/328c14b3-129e-4326-8a1e-12fb38b8ad41" />\
 - Visuliasi tree pemetaan sebelumnya dengan edge yang tidak ditampilkan  
 <img width="905" height="579" alt="image" src="https://github.com/user-attachments/assets/454560cd-097d-4354-b9f2-ada37bed920d" />
 
