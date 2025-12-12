@@ -31,7 +31,7 @@ Knight's Tour (atau Perjalanan Kuda) adalah sebuah teka-teki matematika klasik y
 <img width="413" height="415" alt="image" src="https://github.com/user-attachments/assets/340d6129-6183-4cb3-b07b-f221e7605f81" />
 
 - User mengklik salah satu kotak pada papan catur kosong di layar.
-- Aplikasi akan menempatkan ikon Kuda (Knight) di kotak tersebut (misalnya di G2 seperti pada gambar)
+- Aplikasi akan menempatkan ikon Kuda (Knight) di kotak tersebut (misalnya di G3 seperti pada gambar)
 - Ini menetapkan koordinat awal (x, y) atau (baris, kolom) dari mana algoritma harus mulai mencari jalan.
   
 <img width="233" height="238" alt="image" src="https://github.com/user-attachments/assets/f19c8a13-d38a-4adf-9f25-969897dd159f" />
